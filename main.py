@@ -99,15 +99,47 @@ style.configure(
 
 style.configure(
     "Treeview",
-    rowheight=28,
-    font=("Segoe UI", 9)
+    rowheight=30,
+    font=("Segoe UI", 10)
+)
+
+style.map(
+    "Treeview",
+    background=[("selected", "#2e7d4f")],
+    foreground=[("selected", "white")]
 )
 
 style.configure(
-    "Treeview.Heading",
-    font=("Segoe UI", 9, "bold")
+    "Cadastrar.TButton",
+    font=("Segoe UI", 10, "bold"),
+    padding=8,
+    background="#16a34a",
+    foreground="white"
 )
 
+style.configure(
+    "Alterar.TButton",
+    font=("Segoe UI", 10, "bold"),
+    padding=8,
+    background="#2563eb",
+    foreground="white"
+)
+
+style.configure(
+    "Excluir.TButton",
+    font=("Segoe UI", 10, "bold"),
+    padding=8,
+    background="#dc2626",
+    foreground="white"
+)
+
+style.configure(
+    "Limpar.TButton",
+    font=("Segoe UI", 10, "bold"),
+    padding=8,
+    background="white",
+    foreground="black"
+)
 
 # ============================================================
 # FUNÇÕES GERAIS
@@ -517,23 +549,18 @@ def tela_cadastro():
 def tela_principal(utilizador):
 
     limpar_tela()
-
     root.title("UkeColetivo - Gestão de Alunos")
 
-    # --------------------------------------------------------
+    # ========================================================
     # CABEÇALHO
-    # --------------------------------------------------------
+    # ========================================================
 
     cabecalho = tk.Frame(
         root,
         bg="#174d2b",
         height=65
     )
-
-    cabecalho.pack(
-        fill="x"
-    )
-
+    cabecalho.pack(fill="x")
     cabecalho.pack_propagate(False)
 
     tk.Label(
@@ -566,7 +593,6 @@ def tela_principal(utilizador):
         )
 
         if resposta:
-
             tela_login()
 
     ttk.Button(
@@ -578,42 +604,58 @@ def tela_principal(utilizador):
         padx=20
     )
 
-    # --------------------------------------------------------
+    # ========================================================
     # ÁREA PRINCIPAL
-    # --------------------------------------------------------
+    # ========================================================
 
     principal = tk.Frame(
         root,
         bg="#f4f6f5"
     )
-
     principal.pack(
         fill="both",
         expand=True,
-        padx=15,
-        pady=15
+        padx=20,
+        pady=18
     )
 
-    # --------------------------------------------------------
+    # ========================================================
+    # TÍTULO
+    # ========================================================
+
+    tk.Label(
+        principal,
+        text="Gestão de Alunos",
+        font=("Segoe UI", 18, "bold"),
+        fg="#174d2b",
+        bg="#f4f6f5"
+    ).pack(
+        anchor="w",
+        pady=(0, 12)
+    )
+
+    # ========================================================
     # FORMULÁRIO
-    # --------------------------------------------------------
+    # ========================================================
 
     frame_form = tk.LabelFrame(
         principal,
         text="Dados do aluno",
         font=("Segoe UI", 10, "bold"),
         bg="#f4f6f5",
-        padx=12,
-        pady=10
+        padx=15,
+        pady=12
     )
-
     frame_form.pack(
         fill="x"
     )
 
-    # --------------------------------------------------------
+    frame_form.columnconfigure(1, weight=1)
+    frame_form.columnconfigure(3, weight=1)
+
+    # ========================================================
     # VARIÁVEIS
-    # --------------------------------------------------------
+    # ========================================================
 
     id_selecionado = tk.StringVar()
 
@@ -621,122 +663,135 @@ def tela_principal(utilizador):
     nascimento_var = tk.StringVar()
     telefone_var = tk.StringVar()
     email_var = tk.StringVar()
+
     nivel_var = tk.StringVar(value="Iniciante")
     turma_var = tk.StringVar(value="UKE-01")
     ukulele_var = tk.StringVar(value="Soprano")
-    contribuicao_var = tk.StringVar(value="Ideal")
+    contribuicao_var = tk.StringVar(value="Coletiva")
 
-    # --------------------------------------------------------
+    # ========================================================
     # LINHA 1
-    # --------------------------------------------------------
+    # ========================================================
 
     tk.Label(
         frame_form,
         text="Nome:",
-        bg="#f4f6f5"
+        bg="#f4f6f5",
+        font=("Segoe UI", 9)
     ).grid(
         row=0,
         column=0,
         sticky="w",
-        padx=5,
-        pady=5
+        padx=(5, 8),
+        pady=7
     )
 
     entrada_nome = ttk.Entry(
         frame_form,
         textvariable=nome_var,
-        width=30
+        font=("Segoe UI", 10)
     )
-
     entrada_nome.grid(
         row=0,
         column=1,
-        padx=5,
-        pady=5
+        sticky="ew",
+        padx=(0, 20),
+        pady=7
     )
 
     tk.Label(
         frame_form,
         text="Nascimento:",
-        bg="#f4f6f5"
+        bg="#f4f6f5",
+        font=("Segoe UI", 9)
     ).grid(
         row=0,
         column=2,
         sticky="w",
-        padx=5
+        padx=(5, 8),
+        pady=7
     )
 
-    ttk.Entry(
+    entrada_nascimento = ttk.Entry(
         frame_form,
         textvariable=nascimento_var,
-        width=18
-    ).grid(
+        font=("Segoe UI", 10)
+    )
+    entrada_nascimento.grid(
         row=0,
         column=3,
-        padx=5
+        sticky="ew",
+        pady=7
     )
 
-    # --------------------------------------------------------
+    # ========================================================
     # LINHA 2
-    # --------------------------------------------------------
+    # ========================================================
 
     tk.Label(
         frame_form,
         text="Telefone:",
-        bg="#f4f6f5"
+        bg="#f4f6f5",
+        font=("Segoe UI", 9)
     ).grid(
         row=1,
         column=0,
         sticky="w",
-        padx=5,
-        pady=5
+        padx=(5, 8),
+        pady=7
     )
 
     ttk.Entry(
         frame_form,
         textvariable=telefone_var,
-        width=30
+        font=("Segoe UI", 10)
     ).grid(
         row=1,
         column=1,
-        padx=5
+        sticky="ew",
+        padx=(0, 20),
+        pady=7
     )
 
     tk.Label(
         frame_form,
         text="E-mail:",
-        bg="#f4f6f5"
+        bg="#f4f6f5",
+        font=("Segoe UI", 9)
     ).grid(
         row=1,
         column=2,
         sticky="w",
-        padx=5
+        padx=(5, 8),
+        pady=7
     )
 
     ttk.Entry(
         frame_form,
         textvariable=email_var,
-        width=25
+        font=("Segoe UI", 10)
     ).grid(
         row=1,
         column=3,
-        padx=5
+        sticky="ew",
+        pady=7
     )
 
-    # --------------------------------------------------------
+    # ========================================================
     # LINHA 3
-    # --------------------------------------------------------
+    # ========================================================
 
     tk.Label(
         frame_form,
         text="Nível:",
-        bg="#f4f6f5"
+        bg="#f4f6f5",
+        font=("Segoe UI", 9)
     ).grid(
         row=2,
         column=0,
         sticky="w",
-        padx=5,
-        pady=5
+        padx=(5, 8),
+        pady=7
     )
 
     combo_nivel = ttk.Combobox(
@@ -748,24 +803,27 @@ def tela_principal(utilizador):
             "Avançado"
         ],
         state="readonly",
-        width=27
+        font=("Segoe UI", 10)
     )
-
     combo_nivel.grid(
         row=2,
         column=1,
-        padx=5
+        sticky="ew",
+        padx=(0, 20),
+        pady=7
     )
 
     tk.Label(
         frame_form,
         text="Turma:",
-        bg="#f4f6f5"
+        bg="#f4f6f5",
+        font=("Segoe UI", 9)
     ).grid(
         row=2,
         column=2,
         sticky="w",
-        padx=5
+        padx=(5, 8),
+        pady=7
     )
 
     combo_turma = ttk.Combobox(
@@ -777,29 +835,30 @@ def tela_principal(utilizador):
             "UKE-03"
         ],
         state="readonly",
-        width=22
+        font=("Segoe UI", 10)
     )
-
     combo_turma.grid(
         row=2,
         column=3,
-        padx=5
+        sticky="ew",
+        pady=7
     )
 
-    # --------------------------------------------------------
+    # ========================================================
     # LINHA 4
-    # --------------------------------------------------------
+    # ========================================================
 
     tk.Label(
         frame_form,
         text="Ukulele:",
-        bg="#f4f6f5"
+        bg="#f4f6f5",
+        font=("Segoe UI", 9)
     ).grid(
         row=3,
         column=0,
         sticky="w",
-        padx=5,
-        pady=5
+        padx=(5, 8),
+        pady=7
     )
 
     combo_ukulele = ttk.Combobox(
@@ -812,47 +871,50 @@ def tela_principal(utilizador):
             "Barítono"
         ],
         state="readonly",
-        width=27
+        font=("Segoe UI", 10)
     )
-
     combo_ukulele.grid(
         row=3,
         column=1,
-        padx=5
+        sticky="ew",
+        padx=(0, 20),
+        pady=7
     )
 
     tk.Label(
         frame_form,
         text="Contribuição:",
-        bg="#f4f6f5"
+        bg="#f4f6f5",
+        font=("Segoe UI", 9)
     ).grid(
         row=3,
         column=2,
         sticky="w",
-        padx=5
+        padx=(5, 8),
+        pady=7
     )
 
     combo_contribuicao = ttk.Combobox(
         frame_form,
         textvariable=contribuicao_var,
         values=[
-            "Social",
-            "Ideal",
-            "Sustentadora"
+            "Solidária",
+            "Coletiva",
+            "Generosa"
         ],
         state="readonly",
-        width=22
+        font=("Segoe UI", 10)
     )
-
     combo_contribuicao.grid(
         row=3,
         column=3,
-        padx=5
+        sticky="ew",
+        pady=7
     )
 
-    # --------------------------------------------------------
+    # ========================================================
     # FUNÇÃO LIMPAR
-    # --------------------------------------------------------
+    # ========================================================
 
     def limpar_formulario():
 
@@ -861,10 +923,11 @@ def tela_principal(utilizador):
         nascimento_var.set("")
         telefone_var.set("")
         email_var.set("")
+
         nivel_var.set("Iniciante")
         turma_var.set("UKE-01")
         ukulele_var.set("Soprano")
-        contribuicao_var.set("Ideal")
+        contribuicao_var.set("Coletiva")
 
         tabela.selection_remove(
             tabela.selection()
@@ -872,9 +935,9 @@ def tela_principal(utilizador):
 
         entrada_nome.focus()
 
-    # --------------------------------------------------------
+    # ========================================================
     # CADASTRAR
-    # --------------------------------------------------------
+    # ========================================================
 
     def cadastrar():
 
@@ -888,7 +951,6 @@ def tela_principal(utilizador):
             )
 
             entrada_nome.focus()
-
             return
 
         conn = conectar_bd()
@@ -929,9 +991,9 @@ def tela_principal(utilizador):
         limpar_formulario()
         carregar_alunos()
 
-    # --------------------------------------------------------
+    # ========================================================
     # ALTERAR
-    # --------------------------------------------------------
+    # ========================================================
 
     def alterar():
 
@@ -995,9 +1057,9 @@ def tela_principal(utilizador):
         limpar_formulario()
         carregar_alunos()
 
-    # --------------------------------------------------------
+    # ========================================================
     # EXCLUIR
-    # --------------------------------------------------------
+    # ========================================================
 
     def excluir():
 
@@ -1039,9 +1101,9 @@ def tela_principal(utilizador):
         limpar_formulario()
         carregar_alunos()
 
-    # --------------------------------------------------------
+    # ========================================================
     # BOTÕES
-    # --------------------------------------------------------
+    # ========================================================
 
     frame_botoes = tk.Frame(
         principal,
@@ -1050,70 +1112,70 @@ def tela_principal(utilizador):
 
     frame_botoes.pack(
         fill="x",
-        pady=10
+        pady=12
     )
 
     ttk.Button(
         frame_botoes,
         text="Cadastrar",
-        style="Acao.TButton",
+        style="Cadastrar.TButton",
         command=cadastrar
     ).pack(
         side="left",
-        padx=4
+        padx=(0, 6)
     )
 
     ttk.Button(
         frame_botoes,
         text="Alterar",
-        style="Acao.TButton",
+        style="Alterar.TButton",
         command=alterar
     ).pack(
         side="left",
-        padx=4
+        padx=6
     )
 
     ttk.Button(
         frame_botoes,
         text="Excluir",
-        style="Acao.TButton",
+        style="Excluir.TButton",
         command=excluir
     ).pack(
         side="left",
-        padx=4
+        padx=6
     )
 
     ttk.Button(
         frame_botoes,
         text="Limpar",
+        style="Limpar.TButton",
         command=limpar_formulario
     ).pack(
         side="left",
-        padx=4
-    )
+        padx=6
+    )   
 
-    # --------------------------------------------------------
+    # ========================================================
     # PESQUISA
-    # --------------------------------------------------------
+    # ========================================================
 
     frame_pesquisa = tk.Frame(
         principal,
         bg="#f4f6f5"
     )
-
     frame_pesquisa.pack(
         fill="x",
-        pady=(5, 10)
+        pady=(4, 10)
     )
 
     tk.Label(
         frame_pesquisa,
-        text="Pesquisar:",
+        text="Pesquisar aluno:",
         bg="#f4f6f5",
         font=("Segoe UI", 10, "bold")
     ).pack(
         side="left",
-        padx=(0, 8)
+        padx=(0, 10)
     )
 
     pesquisa_var = tk.StringVar()
@@ -1121,22 +1183,26 @@ def tela_principal(utilizador):
     entrada_pesquisa = ttk.Entry(
         frame_pesquisa,
         textvariable=pesquisa_var,
-        width=35
+        font=("Segoe UI", 10)
     )
-
     entrada_pesquisa.pack(
-        side="left"
+        side="left",
+        fill="x",
+        expand=True
     )
 
-    # --------------------------------------------------------
+    # ========================================================
     # TABELA
-    # --------------------------------------------------------
+    # ========================================================
 
-    frame_tabela = tk.Frame(
+    frame_tabela = tk.LabelFrame(
         principal,
-        bg="#f4f6f5"
+        text="Alunos cadastrados",
+        font=("Segoe UI", 10, "bold"),
+        bg="#f4f6f5",
+        padx=5,
+        pady=5
     )
-
     frame_tabela.pack(
         fill="both",
         expand=True
@@ -1156,6 +1222,17 @@ def tela_principal(utilizador):
         columns=colunas,
         show="headings"
     )
+
+    tabela.tag_configure(
+    "par",
+    background="#ffffff"
+    )
+
+    tabela.tag_configure(
+    "impar",
+    background="#f0f5f2"
+    )
+
 
     tabela.heading(
         "id",
@@ -1189,36 +1266,38 @@ def tela_principal(utilizador):
 
     tabela.column(
         "id",
-        width=50,
-        anchor="center"
+        width=55,
+        anchor="center",
+        stretch=False
     )
 
     tabela.column(
         "nome",
-        width=220
+        width=300,
+        anchor="w"
     )
 
     tabela.column(
         "turma",
-        width=90,
+        width=100,
         anchor="center"
     )
 
     tabela.column(
         "nivel",
-        width=120,
+        width=140,
         anchor="center"
     )
 
     tabela.column(
         "ukulele",
-        width=110,
+        width=120,
         anchor="center"
     )
 
     tabela.column(
         "contribuicao",
-        width=130,
+        width=150,
         anchor="center"
     )
 
@@ -1243,9 +1322,9 @@ def tela_principal(utilizador):
         fill="y"
     )
 
-    # --------------------------------------------------------
+    # ========================================================
     # CARREGAR ALUNOS
-    # --------------------------------------------------------
+    # ========================================================
 
     def carregar_alunos():
 
@@ -1296,17 +1375,20 @@ def tela_principal(utilizador):
         for item in tabela.get_children():
             tabela.delete(item)
 
-        for aluno in alunos:
+        for i, aluno in enumerate(alunos):
+
+            tag = "par" if i % 2 == 0 else "impar"
 
             tabela.insert(
                 "",
                 "end",
-                values=aluno
-            )
+                values=aluno,
+                tags=(tag,)
+        )
 
-    # --------------------------------------------------------
+    # ========================================================
     # SELECIONAR ALUNO
-    # --------------------------------------------------------
+    # ========================================================
 
     def selecionar_aluno(event):
 
@@ -1355,12 +1437,12 @@ def tela_principal(utilizador):
             turma_var.set(aluno[6] or "UKE-01")
             ukulele_var.set(aluno[7] or "Soprano")
             contribuicao_var.set(
-                aluno[8] or "Ideal"
+                aluno[8] or "Coletiva"
             )
 
     tabela.bind(
-        "<<TreeviewSelect>>",
-        selecionar_aluno
+    "<<TreeviewSelect>>",
+    selecionar_aluno
     )
 
     pesquisa_var.trace_add(
@@ -1369,6 +1451,8 @@ def tela_principal(utilizador):
     )
 
     carregar_alunos()
+
+    entrada_nome.focus()
 
 
 # ============================================================
