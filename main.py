@@ -434,6 +434,7 @@ def tela_cadastro():
             )
 
             return
+        
 
         if password != confirmar:
 
