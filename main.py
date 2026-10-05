@@ -252,14 +252,42 @@ def tela_login():
         expand=True
     )
 
+    frame_titulo = tk.Frame(
+    frame_login,
+    bg="white"
+    )
+
+    frame_titulo.pack(
+        pady=(70, 5)
+    )
+
+    if os.path.exists("img/ukulele.png"):
+
+        imagem_ukulele = tk.PhotoImage(
+            file="img/ukulele.png"
+        ).subsample(2, 2)
+
+        label_ukulele = tk.Label(
+            frame_titulo,
+            image=imagem_ukulele,
+            bg="white"
+        )
+
+        label_ukulele.image = imagem_ukulele
+
+        label_ukulele.pack(
+            side="left",
+            padx=(0, 6)
+        )
+
     tk.Label(
-        frame_login,
+        frame_titulo,
         text="UkeColetivo",
         font=("Segoe UI", 28, "bold"),
         fg="#174d2b",
         bg="white"
     ).pack(
-        pady=(70, 5)
+        side="left"
     )
 
     tk.Label(
