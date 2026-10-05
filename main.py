@@ -3,6 +3,8 @@ from tkinter import ttk, messagebox
 import sqlite3
 import hashlib
 import os
+import re
+from datetime import datetime
 
 
 # ============================================================
@@ -68,8 +70,8 @@ def criar_hash(password):
 root = tk.Tk()
 
 root.title("UkeColetivo - Login")
-root.geometry("1000x650")
-root.minsize(900, 600)
+root.geometry("1000x800")
+root.minsize(900, 700)
 
 if os.path.exists(CAMINHO_ICONE):
     root.iconbitmap(CAMINHO_ICONE)
@@ -644,7 +646,7 @@ def tela_principal(utilizador):
         font=("Segoe UI", 10, "bold"),
         bg="#f4f6f5",
         padx=15,
-        pady=12
+        pady=5
     )
     frame_form.pack(
         fill="x"
@@ -863,7 +865,7 @@ def tela_principal(utilizador):
         column=0,
         sticky="w",
         padx=(5, 8),
-        pady=7
+        pady=4
     )
 
     combo_ukulele = ttk.Combobox(
@@ -941,22 +943,81 @@ def tela_principal(utilizador):
         entrada_nome.focus()
 
     # ========================================================
+    # VALIDAÇÃO DOS DADOS
+    # ========================================================
+
+    def validar_dados():
+
+        nome = nome_var.get().strip()
+        nascimento = nascimento_var.get().strip()
+        telefone = telefone_var.get().strip()
+        email = email_var.get().strip()
+
+        # NOME
+        if not nome:
+            messagebox.showwarning(
+                "Atenção",
+                "Informe o nome do aluno."
+            )
+            entrada_nome.focus()
+            return False
+
+        # E-MAIL
+        if email:
+            padrao_email = r"^[^@\s]+@[^@\s]+\.[A-Za-z]{2,}$"
+
+            if not re.match(padrao_email, email):
+                messagebox.showwarning(
+                    "Atenção",
+                    "Informe um e-mail válido."
+                )
+                return False
+
+        # TELEFONE
+        if telefone:
+            numeros = re.sub(r"\D", "", telefone)
+
+            if len(numeros) < 9 or len(numeros) > 15:
+                messagebox.showwarning(
+                    "Atenção",
+                    "Informe um telefone válido."
+                )
+                return False
+
+        # DATA DE NASCIMENTO
+        if nascimento:
+            try:
+                data = datetime.strptime(
+                    nascimento,
+                    "%d/%m/%Y"
+                )
+
+                if data > datetime.now():
+                    messagebox.showwarning(
+                        "Atenção",
+                        "A data de nascimento não pode ser futura."
+                    )
+                    return False
+
+            except ValueError:
+                messagebox.showwarning(
+                    "Atenção",
+                    "A data de nascimento deve estar no formato DD/MM/AAAA."
+                )
+                return False
+
+        return True
+
+    # ========================================================
     # CADASTRAR
     # ========================================================
 
     def cadastrar():
 
-        nome = nome_var.get().strip()
-
-        if not nome:
-
-            messagebox.showwarning(
-                "Atenção",
-                "Informe o nome do aluno."
-            )
-
-            entrada_nome.focus()
+        if not validar_dados():
             return
+
+        nome = nome_var.get().strip()
 
         conn = conectar_bd()
         cursor = conn.cursor()
@@ -1005,24 +1066,16 @@ def tela_principal(utilizador):
         id_aluno = id_selecionado.get()
 
         if not id_aluno:
-
             messagebox.showwarning(
                 "Atenção",
                 "Selecione um aluno para alterar."
             )
+            return
 
+        if not validar_dados():
             return
 
         nome = nome_var.get().strip()
-
-        if not nome:
-
-            messagebox.showwarning(
-                "Atenção",
-                "Informe o nome do aluno."
-            )
-
-            return
 
         conn = conectar_bd()
         cursor = conn.cursor()
@@ -1061,7 +1114,7 @@ def tela_principal(utilizador):
 
         limpar_formulario()
         carregar_alunos()
-
+        
     # ========================================================
     # EXCLUIR
     # ========================================================
@@ -1296,10 +1349,15 @@ def tela_principal(utilizador):
         padx=5,
         pady=5
     )
+
     frame_tabela.pack(
         fill="both",
-        expand=True
-    )
+        expand=False,
+        pady=(0, 5)
+        )
+
+    frame_tabela.configure(height=220)
+    frame_tabela.pack_propagate(False)
 
     colunas = (
         "id",
@@ -1313,7 +1371,8 @@ def tela_principal(utilizador):
     tabela = ttk.Treeview(
         frame_tabela,
         columns=colunas,
-        show="headings"
+        show="headings",
+        height=6
     )
 
     tabela.tag_configure(
