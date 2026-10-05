@@ -669,6 +669,11 @@ def tela_principal(utilizador):
     ukulele_var = tk.StringVar(value="Soprano")
     contribuicao_var = tk.StringVar(value="Coletiva")
 
+    turma_filtro_var = tk.StringVar(value="Todas")
+    nivel_filtro_var = tk.StringVar(value="Todos")
+    ukulele_filtro_var = tk.StringVar(value="Todos")
+    contribuicao_filtro_var = tk.StringVar(value="Todas")
+
     # ========================================================
     # LINHA 1
     # ========================================================
@@ -1163,6 +1168,7 @@ def tela_principal(utilizador):
         principal,
         bg="#f4f6f5"
     )
+
     frame_pesquisa.pack(
         fill="x",
         pady=(4, 10)
@@ -1190,6 +1196,93 @@ def tela_principal(utilizador):
         fill="x",
         expand=True
     )
+
+        # ========================================================
+    # FILTROS
+    # ========================================================
+
+    frame_filtros = ttk.Frame(principal)
+
+    frame_filtros.pack(
+        fill="x",
+        padx=20,
+        pady=(0, 15)
+    )
+
+    ttk.Label(
+        frame_filtros,
+        text="Turma:"
+    ).pack(side="left", padx=(0, 5))
+
+    combo_filtro_turma = ttk.Combobox(
+        frame_filtros,
+        textvariable=turma_filtro_var,
+        values=["Todas", "UKE-01", "UKE-02", "UKE-03"],
+        state="readonly",
+        width=10
+    )
+    combo_filtro_turma.pack(side="left", padx=(0, 15))
+
+
+    ttk.Label(
+        frame_filtros,
+        text="Nível:"
+    ).pack(side="left", padx=(0, 5))
+
+    combo_filtro_nivel = ttk.Combobox(
+        frame_filtros,
+        textvariable=nivel_filtro_var,
+        values=[
+            "Todos",
+            "Iniciante",
+            "Intermediário",
+            "Avançado"
+        ],
+        state="readonly",
+        width=15
+    )
+    combo_filtro_nivel.pack(side="left", padx=(0, 15))
+
+
+    ttk.Label(
+        frame_filtros,
+        text="Ukulele:"
+    ).pack(side="left", padx=(0, 5))
+
+    combo_filtro_ukulele = ttk.Combobox(
+        frame_filtros,
+        textvariable=ukulele_filtro_var,
+        values=[
+            "Todos",
+            "Soprano",
+            "Concert",
+            "Tenor",
+            "Barítono"
+        ],
+        state="readonly",
+        width=12
+    )
+    combo_filtro_ukulele.pack(side="left", padx=(0, 15))
+
+
+    ttk.Label(
+        frame_filtros,
+        text="Contribuição:"
+    ).pack(side="left", padx=(0, 5))
+
+    combo_filtro_contribuicao = ttk.Combobox(
+        frame_filtros,
+        textvariable=contribuicao_filtro_var,
+        values=[
+            "Todas",
+            "Solidária",
+            "Coletiva",
+            "Generosa"
+        ],
+        state="readonly",
+        width=13
+    )
+    combo_filtro_contribuicao.pack(side="left")
 
     # ========================================================
     # TABELA
@@ -1322,7 +1415,7 @@ def tela_principal(utilizador):
         fill="y"
     )
 
-    # ========================================================
+       # ========================================================
     # CARREGAR ALUNOS
     # ========================================================
 
@@ -1330,61 +1423,91 @@ def tela_principal(utilizador):
 
         termo = pesquisa_var.get().strip()
 
+        turma = turma_filtro_var.get()
+        nivel = nivel_filtro_var.get()
+        ukulele = ukulele_filtro_var.get()
+        contribuicao = contribuicao_filtro_var.get()
+
         conn = conectar_bd()
         cursor = conn.cursor()
 
+        sql = """
+            SELECT
+                id,
+                nome,
+                turma,
+                nivel,
+                tipo_ukulele,
+                contribuicao
+            FROM alunos
+            WHERE 1=1
+        """
+
+        parametros = []
+
+        # Pesquisa
         if termo:
 
-            cursor.execute("""
-                SELECT
-                    id,
-                    nome,
-                    turma,
-                    nivel,
-                    tipo_ukulele,
-                    contribuicao
-                FROM alunos
-                WHERE nome LIKE ?
-                   OR email LIKE ?
-                   OR telefone LIKE ?
-                ORDER BY nome
-            """, (
+            sql += """
+                AND (
+                    nome LIKE ?
+                    OR email LIKE ?
+                    OR telefone LIKE ?
+                )
+            """
+
+            parametros.extend([
                 f"%{termo}%",
                 f"%{termo}%",
                 f"%{termo}%"
-            ))
+            ])
 
-        else:
+        # Filtro turma
+        if turma != "Todas":
 
-            cursor.execute("""
-                SELECT
-                    id,
-                    nome,
-                    turma,
-                    nivel,
-                    tipo_ukulele,
-                    contribuicao
-                FROM alunos
-                ORDER BY nome
-            """)
+            sql += " AND turma = ?"
+            parametros.append(turma)
+
+        # Filtro nível
+        if nivel != "Todos":
+
+            sql += " AND nivel = ?"
+            parametros.append(nivel)
+
+        # Filtro ukulele
+        if ukulele != "Todos":
+
+            sql += " AND tipo_ukulele = ?"
+            parametros.append(ukulele)
+
+        # Filtro contribuição
+        if contribuicao != "Todas":
+
+            sql += " AND contribuicao = ?"
+            parametros.append(contribuicao)
+
+        sql += " ORDER BY nome"
+
+        cursor.execute(
+            sql,
+            parametros
+        )
 
         alunos = cursor.fetchall()
 
         conn.close()
 
         for item in tabela.get_children():
+
             tabela.delete(item)
 
-        for i, aluno in enumerate(alunos):
-
-            tag = "par" if i % 2 == 0 else "impar"
+        for aluno in alunos:
 
             tabela.insert(
                 "",
                 "end",
-                values=aluno,
-                tags=(tag,)
-        )
+                values=aluno
+            )
 
     # ========================================================
     # SELECIONAR ALUNO
@@ -1446,6 +1569,26 @@ def tela_principal(utilizador):
     )
 
     pesquisa_var.trace_add(
+        "write",
+        lambda *args: carregar_alunos()
+    )
+
+    turma_filtro_var.trace_add(
+    "write",
+    lambda *args: carregar_alunos()
+    )
+
+    nivel_filtro_var.trace_add(
+        "write",
+        lambda *args: carregar_alunos()
+    )
+
+    ukulele_filtro_var.trace_add(
+        "write",
+        lambda *args: carregar_alunos()
+    )
+
+    contribuicao_filtro_var.trace_add(
         "write",
         lambda *args: carregar_alunos()
     )
